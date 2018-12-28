@@ -41,7 +41,7 @@ extern "C" {
         inet_ntop(AF_INET, tmpAddrPtr, addressBuffer, INET_ADDRSTRLEN);
         //printf("%s IP Address %s\n", ifa->ifa_name, addressBuffer);
         // we do not care about the loopback interfaces
-        if (strcmp(ifa->ifa_name, "lo0") != 0) {
+        if (strcmp(ifa->ifa_name, "lo") != 0) {
           retval += addressBuffer;
           break; // only want the first one
         }
