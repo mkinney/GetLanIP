@@ -43,6 +43,7 @@ extern "C" {
         // we do not care about the loopback interfaces
         if (strcmp(ifa->ifa_name, "lo0") != 0) {
           retval += addressBuffer;
+          break; // only want the first one
         }
       }
     }

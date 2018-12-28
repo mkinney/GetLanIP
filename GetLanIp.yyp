@@ -191,6 +191,25 @@
             }
         },
         {
+            "Key": "791c3ff0-4d79-4e97-9cf9-ebf9278175f9",
+            "Value": {
+                "id": "ea41b0d1-90ad-4cfc-aec2-7f036e0be06b",
+                "modelName": "GMResourceInfo",
+                "mvc": "1.0",
+                "configDeltaFiles": [
+                    
+                ],
+                "configDeltas": [
+                    
+                ],
+                "resourceCreationConfigs": [
+                    "default"
+                ],
+                "resourcePath": "datafiles_yy\/libMyLib.so.yy",
+                "resourceType": "GMIncludedFile"
+            }
+        },
+        {
             "Key": "8427047f-9ef8-4c77-89f3-9c20623d07b6",
             "Value": {
                 "id": "4490fee1-a7a5-45ad-b009-c6244a5dbf3e",

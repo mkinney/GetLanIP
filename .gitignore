@@ -1,0 +1,6 @@
+.*.swp
+libs/main
+libs/*.dylib
+libs/*.so
+libs/*.dll
+
