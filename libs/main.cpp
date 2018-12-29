@@ -4,9 +4,13 @@
 
 using std::string;
 
-extern "C" {
-  char *LanIP(void);
-}
+#ifdef WIN
+#define DLL _declspec(dllimport)
+#else
+#define DLL
+#endif
+
+extern "C" DLL char *LanIP(void);
 
 int main() {
   fprintf(stderr, "LanIP:%s\n", LanIP());
