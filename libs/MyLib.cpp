@@ -1,14 +1,26 @@
-#include <stdio.h>
-#include <string>
-#include <sys/types.h>
-#include <ifaddrs.h>
-#include <netinet/in.h>
-#include <string.h>
-#include <arpa/inet.h>
+#undef UNICODE
 
-#define BUFSIZE 128
+#include <string>
+
+#ifdef WIN
+  #include <winsock2.h>
+  #include <ws2tcpip.h>
+#else
+  #include <unistd.h>
+  #include <netdb.h>
+  #include <sys/socket.h>
+  #include <netinet/in.h>
+  #include <arpa/inet.h>
+#endif
+
+#include <stdio.h>
 
 using std::string;
+
+#ifdef WIN
+  // link with Ws2_32.lib
+  #pragma comment (lib, "Ws2_32.lib")
+#endif
 
 extern "C" {
 
@@ -23,35 +35,29 @@ extern "C" {
   // get ipv4 address (of non-loopback)
   // borrowed from https://stackoverflow.com/questions/212528/get-the-ip-address-of-the-machine
   char *LanIP(void) {
-    string retval = "";
-    struct ifaddrs * ifAddrStruct = NULL;
-    struct ifaddrs * ifa = NULL;
-    void * tmpAddrPtr = NULL;
+    string retval;
+    char myhostname[256];
 
-    getifaddrs(&ifAddrStruct);
-
-    // loop thru the interfaces
-    for (ifa = ifAddrStruct; ifa != NULL; ifa = ifa->ifa_next) {
-      if (!ifa->ifa_addr) {
-        continue;
-      }
-      if (ifa->ifa_addr->sa_family == AF_INET) { // IP4
-        tmpAddrPtr=&((struct sockaddr_in *)ifa->ifa_addr)->sin_addr;
-        char addressBuffer[INET_ADDRSTRLEN];
-        inet_ntop(AF_INET, tmpAddrPtr, addressBuffer, INET_ADDRSTRLEN);
-        printf("%s IP Address %s\n", ifa->ifa_name, addressBuffer);
-        // we do not care about the loopback interfaces
-        if (strncmp("lo", ifa->ifa_name, 2) != 0) {
-          retval += addressBuffer;
-          break; // only want the first one
-        }
-      }
+#ifdef WIN32
+    WSADATA wsaData;
+    WORD wVersionRequested = MAKEWORD(2, 0);
+    if(::WSAStartup(wVersionRequested, &wsaData) != 0)
+      return ToStringPtr(retval);
+#endif
+    gethostname(myhostname, sizeof(myhostname));
+    struct hostent *host = gethostbyname(myhostname);
+    if (host == NULL) {
+#ifdef WIN32
+      WSACleanup();
+#endif
+      return ToStringPtr(retval);
     }
-    if (ifAddrStruct != NULL) {
-      freeifaddrs(ifAddrStruct);
-    }
-
+    //printf("name: %s\n",host->h_name);
+    retval = inet_ntoa((*(struct in_addr *)host->h_addr_list[0]));
+#ifdef WIN32
+    WSACleanup();
+#endif
     return ToStringPtr(retval);
-  }
+  } // LanIP
 
 }
